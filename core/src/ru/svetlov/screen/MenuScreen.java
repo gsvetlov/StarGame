@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import ru.svetlov.base.BaseScreen;
+import ru.svetlov.model.TrackingObject;
+
 public class MenuScreen extends BaseScreen {
     private final Texture background;
     private final Texture followerImage;

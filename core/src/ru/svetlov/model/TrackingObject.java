@@ -1,8 +1,6 @@
-package ru.svetlov.screen;
+package ru.svetlov.model;
 
 import com.badlogic.gdx.math.Vector2;
-
-import ru.svetlov.base.GameObject;
 
 public class TrackingObject extends GameObject {
     private Vector2 targetPosition;

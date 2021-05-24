@@ -1,11 +1,10 @@
-package ru.svetlov.screen;
+package ru.svetlov.base;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import ru.svetlov.base.InputEventProviderFactory;
-import ru.svetlov.user.controller.UserInputEventProvider;
+import ru.svetlov.user.controller.events.UserInputEventProvider;
 
 public abstract class BaseScreen implements Screen {
     protected SpriteBatch batch;

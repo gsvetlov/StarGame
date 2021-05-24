@@ -1,4 +1,4 @@
-package ru.svetlov.base;
+package ru.svetlov.model;
 
 import com.badlogic.gdx.math.Vector2;
 

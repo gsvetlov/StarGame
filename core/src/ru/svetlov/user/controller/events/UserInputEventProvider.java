@@ -1,4 +1,4 @@
-package ru.svetlov.user.controller;
+package ru.svetlov.user.controller.events;
 
 public interface UserInputEventProvider {
     void setTouchDownEventHandler(TouchDownEvent handler);

@@ -1,4 +1,4 @@
-package ru.svetlov.user.controller;
+package ru.svetlov.user.controller.events;
 
 @FunctionalInterface
 public interface TouchDownEvent {
