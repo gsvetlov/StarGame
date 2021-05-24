@@ -2,9 +2,24 @@ package ru.svetlov.user.controller;
 
 import com.badlogic.gdx.InputProcessor;
 
-public class BaseUserInputProcessor implements InputProcessor {
+public class BasicUserInputProcessor implements InputProcessor, UserInputEventProvider {
+    private TouchDownEvent touchDownEventHandler;
+    private KeyDownEvent keyDownEventHandler;
+
+    @Override
+    public void setTouchDownEventHandler(TouchDownEvent handler) {
+        touchDownEventHandler = handler;
+    }
+
+    @Override
+    public void setKeyDownEventHandler(KeyDownEvent handler) {
+        keyDownEventHandler = handler;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
+        if (keyDownEventHandler != null)
+            keyDownEventHandler.onKeyDown(keycode);
         return false;
     }
 
@@ -20,6 +35,8 @@ public class BaseUserInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (touchDownEventHandler != null)
+            touchDownEventHandler.onTouchDown(screenX, screenY, pointer, button);
         return false;
     }
 

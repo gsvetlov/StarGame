@@ -1,20 +1,21 @@
 package ru.svetlov.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+
+import ru.svetlov.base.InputEventProviderFactory;
+import ru.svetlov.user.controller.UserInputEventProvider;
 
 public abstract class BaseScreen implements Screen {
     protected SpriteBatch batch;
     protected int userDeviceWidth;
     protected int userDeviceHeight;
-    protected InputProcessor processor;
+    protected boolean isPaused;
+    protected UserInputEventProvider eventProvider;
 
-    public BaseScreen(InputProcessor processor){
-        this.processor = processor;
+    public BaseScreen(){
+        eventProvider = InputEventProviderFactory.getFactory().getClassUserEventProvider(this);
         userDeviceHeight = Gdx.graphics.getHeight();
         userDeviceWidth = Gdx.graphics.getWidth();
     }
@@ -33,12 +34,12 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void pause() {
-
+        isPaused = true;
     }
 
     @Override
     public void resume() {
-
+        isPaused = false;
     }
 
     @Override
