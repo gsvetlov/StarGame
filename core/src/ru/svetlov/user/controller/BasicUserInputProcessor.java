@@ -4,7 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 
 import ru.svetlov.user.controller.events.KeyDownEvent;
 import ru.svetlov.user.controller.events.TouchDownEvent;
-import ru.svetlov.user.controller.events.UserInputEventProvider;
+import ru.svetlov.base.UserInputEventProvider;
 
 public class BasicUserInputProcessor implements InputProcessor, UserInputEventProvider {
     private TouchDownEvent touchDownEventHandler;

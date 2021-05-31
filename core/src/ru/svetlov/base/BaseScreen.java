@@ -1,22 +1,33 @@
 package ru.svetlov.base;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
-import ru.svetlov.user.controller.events.UserInputEventProvider;
+import ru.svetlov.base.util.MatrixUtils;
 
 public abstract class BaseScreen implements Screen {
+    protected Rectangle screenBounds;
+    protected Rectangle worldBounds;
+    protected final Rectangle glBounds;
+    protected Matrix4 worldToGl;
+    protected Matrix3 screenToWorld;
     protected SpriteBatch batch;
     protected int userDeviceWidth;
     protected int userDeviceHeight;
     protected boolean isPaused;
-    protected UserInputEventProvider eventProvider;
+    protected UserInputEventProvider userEventProvider;
 
-    public BaseScreen(){
-        eventProvider = InputEventProviderFactory.getFactory().getClassUserEventProvider(this);
-        userDeviceHeight = Gdx.graphics.getHeight();
-        userDeviceWidth = Gdx.graphics.getWidth();
+    public BaseScreen(UserInputEventProvider userInputEventProvider) {
+        userEventProvider = userInputEventProvider;
+        screenBounds = new Rectangle();
+        worldBounds = new Rectangle(0, 0, 0, 1f);
+        glBounds = new Rectangle(0, 0, 2f, 2f);
+        worldToGl = new Matrix4();
+        screenToWorld = new Matrix3();
     }
 
     @Override
@@ -27,9 +38,17 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        userDeviceHeight = height;
-        userDeviceWidth = width;
+        screenBounds.setHeight(height);
+        screenBounds.setWidth(width);
+        screenBounds.setPosition(width * 1f / 2f, height  * 1f / 2f);
+        worldBounds.setWidth(screenBounds.getAspectRatio());
+        MatrixUtils.getTransitionMatrix(worldToGl, worldBounds, glBounds);
+        MatrixUtils.getTransitionMatrix(screenToWorld, screenBounds, worldBounds);
+        batch.setProjectionMatrix(worldToGl);
+        resize(worldBounds);
     }
+
+    public abstract void resize(Rectangle worldBounds);
 
     @Override
     public void pause() {

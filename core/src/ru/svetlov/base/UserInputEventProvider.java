@@ -1,4 +1,7 @@
-package ru.svetlov.user.controller.events;
+package ru.svetlov.base;
+
+import ru.svetlov.user.controller.events.KeyDownEvent;
+import ru.svetlov.user.controller.events.TouchDownEvent;
 
 public interface UserInputEventProvider {
     void setTouchDownEventHandler(TouchDownEvent handler);
