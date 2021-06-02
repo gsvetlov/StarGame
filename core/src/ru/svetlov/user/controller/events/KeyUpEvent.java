@@ -1,6 +1,6 @@
 package ru.svetlov.user.controller.events;
 
 @FunctionalInterface
-public interface KeyDownEvent {
+public interface KeyUpEvent {
     void notify(int keycode);
 }

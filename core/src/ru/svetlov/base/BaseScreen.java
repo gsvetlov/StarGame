@@ -16,8 +16,6 @@ public abstract class BaseScreen implements Screen {
     protected Matrix4 worldToGl;
     protected Matrix3 screenToWorld;
     protected SpriteBatch batch;
-    protected int userDeviceWidth;
-    protected int userDeviceHeight;
     protected boolean isPaused;
     protected UserInputEventProvider userEventProvider;
 
@@ -25,7 +23,7 @@ public abstract class BaseScreen implements Screen {
         userEventProvider = userInputEventProvider;
         screenBounds = new Rectangle();
         worldBounds = new Rectangle(0, 0, 0, 1f);
-        glBounds = new Rectangle(0, 0, 2f, 2f);
+        glBounds = new Rectangle(0, 0, 2f, 2f).setCenter(0,0);
         worldToGl = new Matrix4();
         screenToWorld = new Matrix3();
     }
@@ -38,14 +36,13 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        screenBounds.setHeight(height);
-        screenBounds.setWidth(width);
-        screenBounds.setPosition(width * 1f / 2f, height  * 1f / 2f);
-        worldBounds.setWidth(screenBounds.getAspectRatio());
+        screenBounds.setSize(width, height);
+        worldBounds.setWidth(screenBounds.getAspectRatio()).setCenter(0,0);
         MatrixUtils.getTransitionMatrix(worldToGl, worldBounds, glBounds);
         MatrixUtils.getTransitionMatrix(screenToWorld, screenBounds, worldBounds);
         batch.setProjectionMatrix(worldToGl);
         resize(worldBounds);
+        userEventProvider.setScreenBounds(screenBounds);
     }
 
     public abstract void resize(Rectangle worldBounds);

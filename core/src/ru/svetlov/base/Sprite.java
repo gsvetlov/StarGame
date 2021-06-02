@@ -63,6 +63,8 @@ public abstract class Sprite {
         updatePosition(delta);
     }
 
+    public void dispose() {}
+
     private void updatePosition(float delta) {
         position.mulAdd(velocity, delta);
         spriteBounds.setCenter(position);
