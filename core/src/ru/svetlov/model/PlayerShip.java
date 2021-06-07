@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.svetlov.base.Sprite;
 import ru.svetlov.base.UserInputEventProvider;
+import ru.svetlov.pool.BulletPool;
 import ru.svetlov.user.controller.events.*;
 
 public class PlayerShip extends Sprite {
@@ -17,11 +18,21 @@ public class PlayerShip extends Sprite {
     private final Matrix3 screenToWorld;
     private Rectangle worldBounds;
 
+    private BulletPool bullets;
+    private TextureRegion bulletRegion;
+    private Vector2 bulletPosition;
+    private Vector2 bulletSpeed;
+
     public PlayerShip(UserInputEventProvider provider, Matrix3 screenToWorld,
-                      TextureRegion[] regions) {
+                      TextureRegion[] regions, BulletPool bulletPool, TextureRegion bulletRegion) {
         super(regions, new Vector2(), new Vector2(), new Vector2());
         targetPosition = position.cpy();
         touch = new Vector2();
+
+        this.bullets = bulletPool;
+        this.bulletRegion = bulletRegion;
+        bulletPosition = new Vector2();
+        bulletSpeed = new Vector2();
 
         // get screen to world conversion matrix
         this.screenToWorld = screenToWorld; // TODO: refactor to call outer converter
@@ -80,6 +91,18 @@ public class PlayerShip extends Sprite {
             position.y = worldBounds.getY() + worldBounds.getHeight();
     }
 
+    private void shoot(boolean trigger) {
+        Bullet bullet = bullets.obtain();
+        bullet.set(
+                this,
+                bulletRegion,
+                bulletPosition.set(position.x, position.y + spriteBounds.height / 2),
+                bulletSpeed.set(0, 0.4f),
+                worldBounds,
+                1,
+                0.01f);
+    }
+
     private void onTouchDown(float screenX, float screenY, int pointer, int button) {
         touch.set(screenX, screenY).mul(screenToWorld);
     }
@@ -94,43 +117,49 @@ public class PlayerShip extends Sprite {
     }
 
     private void onKeyDown(int code) {
-        switch (code){
+        switch (code) {
             case Input.Keys.A:
             case Input.Keys.LEFT:
-                velocity.add(-0.1f,0);
+                velocity.add(-0.1f, 0);
                 break;
             case Input.Keys.D:
             case Input.Keys.RIGHT:
-                velocity.add(0.1f,0);
+                velocity.add(0.1f, 0);
                 break;
             case Input.Keys.W:
             case Input.Keys.UP:
-                velocity.add(0,0.1f);
+                velocity.add(0, 0.1f);
                 break;
             case Input.Keys.S:
             case Input.Keys.DOWN:
-                velocity.add(0,-0.1f);
+                velocity.add(0, -0.1f);
+                break;
+            case Input.Keys.ALT_LEFT:
+                shoot(true);
                 break;
         }
     }
 
     private void onKeyUp(int code) {
-        switch (code){
+        switch (code) {
             case Input.Keys.A:
             case Input.Keys.LEFT:
-                velocity.sub(-0.1f,0);
+                velocity.sub(-0.1f, 0);
                 break;
             case Input.Keys.D:
             case Input.Keys.RIGHT:
-                velocity.sub(0.1f,0);
+                velocity.sub(0.1f, 0);
                 break;
             case Input.Keys.W:
             case Input.Keys.UP:
-                velocity.sub(0,0.1f);
+                velocity.sub(0, 0.1f);
                 break;
             case Input.Keys.S:
             case Input.Keys.DOWN:
-                velocity.sub(0,-0.1f);
+                velocity.sub(0, -0.1f);
+                break;
+            case Input.Keys.ALT_LEFT:
+                shoot(false);
                 break;
         }
     }

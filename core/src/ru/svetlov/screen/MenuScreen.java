@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+
 
 import ru.svetlov.base.BaseScreen;
 import ru.svetlov.base.UserInputEventProvider;
@@ -16,6 +16,7 @@ import ru.svetlov.base.util.TextureRegions;
 import ru.svetlov.model.Background;
 import ru.svetlov.model.Star;
 import ru.svetlov.model.PlayerShip;
+import ru.svetlov.pool.BulletPool;
 
 public class MenuScreen extends BaseScreen {
     private final TextureAtlas atlas;
@@ -24,12 +25,14 @@ public class MenuScreen extends BaseScreen {
     private Background background;
     private PlayerShip playerShip;
     private Star[] stars;
+    private BulletPool bulletPool;
 
 
     public MenuScreen(UserInputEventProvider userInputEventProvider) {
         super(userInputEventProvider);
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         gameAtlas = new TextureAtlas("textures/mainAtlas.tpack");
+        bulletPool = new BulletPool();
     }
 
     @Override
@@ -39,7 +42,8 @@ public class MenuScreen extends BaseScreen {
         background = new Background(bgTexture);
         TextureRegion[] playerTextures = TextureRegions.split(
                 gameAtlas.findRegion("main_ship"), 1, 2, 2);
-        playerShip = new PlayerShip(userEventProvider, screenToWorld, playerTextures);
+        TextureRegion bulletRegion = gameAtlas.findRegion("bulletMainShip");
+        playerShip = new PlayerShip(userEventProvider, screenToWorld, playerTextures, bulletPool, bulletRegion);
         stars = new Star[128];
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(atlas.findRegion("star"));
@@ -51,6 +55,11 @@ public class MenuScreen extends BaseScreen {
         for (Star s : stars)
             s.update(delta);
         playerShip.update(delta);
+        bulletPool.updateActiveSprites(delta);
+    }
+
+    private void freeAllDestroyed(){
+        bulletPool.freeAllDestroyed();
     }
 
     private void draw(SpriteBatch batch) {
@@ -58,13 +67,14 @@ public class MenuScreen extends BaseScreen {
         for (Star s : stars)
             s.draw(batch);
         playerShip.draw(batch);
+        bulletPool.drawActiveSprites(batch);
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.33f, 0.45f, 0.66f, 1);
-        ScreenUtils.clear(0.3f, 0.3f, 0.3f, 1);
         update(delta);
+        freeAllDestroyed();
         batch.begin();
         draw(batch);
         batch.end();
@@ -85,5 +95,6 @@ public class MenuScreen extends BaseScreen {
         bgTexture.dispose();
         atlas.dispose();
         gameAtlas.dispose();
+        bulletPool.dispose();
     }
 }

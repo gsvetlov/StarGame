@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.svetlov.base.util.TextureRegions;
-
 public abstract class Sprite {
 
     protected float angle;
@@ -18,12 +16,16 @@ public abstract class Sprite {
     protected Vector2 position;
     protected Vector2 velocity;
     protected Vector2 acceleration;
+    protected boolean destroyed;
+
+    public Sprite() {
+    }
 
     public Sprite(TextureRegion region) {
         this(region, new Vector2(), new Vector2(), new Vector2());
     }
 
-    public Sprite(TextureRegion[] regions, Vector2 position, Vector2 velocity, Vector2 acceleration){
+    public Sprite(TextureRegion[] regions, Vector2 position, Vector2 velocity, Vector2 acceleration) {
         this.regions = regions;
         this.position = position.cpy();
         this.velocity = velocity.cpy();
@@ -73,7 +75,8 @@ public abstract class Sprite {
         updatePosition(delta);
     }
 
-    public void dispose() {}
+    public void dispose() {
+    }
 
     private void updatePosition(float delta) {
         position.mulAdd(velocity, delta);
@@ -107,5 +110,13 @@ public abstract class Sprite {
 
     public void setAcceleration(Vector2 acceleration) {
         this.acceleration.set(acceleration);
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
     }
 }
