@@ -2,6 +2,7 @@ package ru.svetlov.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -25,7 +26,8 @@ public class MenuScreen extends BaseScreen {
     private Background background;
     private PlayerShip playerShip;
     private Star[] stars;
-    private BulletPool bulletPool;
+    private final BulletPool bulletPool;
+    private final Music music;
 
 
     public MenuScreen(UserInputEventProvider userInputEventProvider) {
@@ -33,6 +35,7 @@ public class MenuScreen extends BaseScreen {
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         gameAtlas = new TextureAtlas("textures/mainAtlas.tpack");
         bulletPool = new BulletPool();
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
     }
 
     @Override
@@ -49,6 +52,9 @@ public class MenuScreen extends BaseScreen {
             stars[i] = new Star(atlas.findRegion("star"));
         }
         batch = new SpriteBatch();
+        music.setLooping(true);
+        music.setVolume(0.2f);
+        music.play();
     }
 
     private void update(float delta) {
@@ -96,5 +102,18 @@ public class MenuScreen extends BaseScreen {
         atlas.dispose();
         gameAtlas.dispose();
         bulletPool.dispose();
+        music.dispose();
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        music.pause();
+    }
+
+    @Override
+    public void resume() {
+        super.resume();
+        music.play();
     }
 }
