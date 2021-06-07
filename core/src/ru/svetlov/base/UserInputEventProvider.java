@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Rectangle;
 import ru.svetlov.user.controller.events.*;
 
 public interface UserInputEventProvider {
-    //void setTouchDownEventHandler(TouchDownEvent handler);
-    //void setKeyDownEventHandler(KeyDownEvent handler);
     void subscribe(TouchDownEvent listener);
     void unsubscribe(TouchDownEvent listener);
     void subscribe(TouchUpEvent listener);

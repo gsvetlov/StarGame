@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import ru.svetlov.base.util.TextureRegions;
+
 public abstract class Sprite {
 
     protected float angle;
@@ -19,6 +21,14 @@ public abstract class Sprite {
 
     public Sprite(TextureRegion region) {
         this(region, new Vector2(), new Vector2(), new Vector2());
+    }
+
+    public Sprite(TextureRegion[] regions, Vector2 position, Vector2 velocity, Vector2 acceleration){
+        this.regions = regions;
+        this.position = position.cpy();
+        this.velocity = velocity.cpy();
+        this.acceleration = acceleration.cpy();
+        spriteBounds = new Rectangle(0, 0, regions[0].getRegionWidth(), regions[0].getRegionHeight());
     }
 
     public Sprite(TextureRegion region, Vector2 position) {

@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import ru.svetlov.base.BaseScreen;
 import ru.svetlov.base.UserInputEventProvider;
+import ru.svetlov.base.util.TextureRegions;
 import ru.svetlov.model.Background;
 import ru.svetlov.model.Star;
 import ru.svetlov.model.PlayerShip;
@@ -29,7 +30,6 @@ public class MenuScreen extends BaseScreen {
         super(userInputEventProvider);
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         gameAtlas = new TextureAtlas("textures/mainAtlas.tpack");
-
     }
 
     @Override
@@ -37,9 +37,9 @@ public class MenuScreen extends BaseScreen {
         Gdx.input.setInputProcessor((InputProcessor) userEventProvider);
         bgTexture = new Texture("bg01.png");
         background = new Background(bgTexture);
-        TextureRegion playerTexture = gameAtlas.findRegion("main_ship");
-        playerTexture.setRegion(playerTexture, 0, 0, playerTexture.getRegionWidth() / 2, playerTexture.getRegionHeight());
-        playerShip = new PlayerShip(userEventProvider, screenToWorld, playerTexture);
+        TextureRegion[] playerTextures = TextureRegions.split(
+                gameAtlas.findRegion("main_ship"), 1, 2, 2);
+        playerShip = new PlayerShip(userEventProvider, screenToWorld, playerTextures);
         stars = new Star[128];
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(atlas.findRegion("star"));
