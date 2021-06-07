@@ -16,9 +16,21 @@ public abstract class Sprite {
     protected Vector2 position;
     protected Vector2 velocity;
     protected Vector2 acceleration;
+    protected boolean destroyed;
+
+    public Sprite() {
+    }
 
     public Sprite(TextureRegion region) {
         this(region, new Vector2(), new Vector2(), new Vector2());
+    }
+
+    public Sprite(TextureRegion[] regions, Vector2 position, Vector2 velocity, Vector2 acceleration) {
+        this.regions = regions;
+        this.position = position.cpy();
+        this.velocity = velocity.cpy();
+        this.acceleration = acceleration.cpy();
+        spriteBounds = new Rectangle(0, 0, regions[0].getRegionWidth(), regions[0].getRegionHeight());
     }
 
     public Sprite(TextureRegion region, Vector2 position) {
@@ -63,6 +75,9 @@ public abstract class Sprite {
         updatePosition(delta);
     }
 
+    public void dispose() {
+    }
+
     private void updatePosition(float delta) {
         position.mulAdd(velocity, delta);
         spriteBounds.setCenter(position);
@@ -95,5 +110,13 @@ public abstract class Sprite {
 
     public void setAcceleration(Vector2 acceleration) {
         this.acceleration.set(acceleration);
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
     }
 }
