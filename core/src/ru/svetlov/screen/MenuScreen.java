@@ -14,58 +14,68 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import ru.svetlov.base.BaseScreen;
 import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.base.util.TextureRegions;
+import ru.svetlov.model.AlienGenerator;
 import ru.svetlov.model.Background;
 import ru.svetlov.model.Star;
 import ru.svetlov.model.PlayerShip;
+import ru.svetlov.pool.AlienPool;
 import ru.svetlov.pool.BulletPool;
 
 public class MenuScreen extends BaseScreen {
     private final TextureAtlas atlas;
     private final TextureAtlas gameAtlas;
-    private Texture bgTexture;
+    private final Texture bgTexture;
     private Background background;
     private PlayerShip playerShip;
     private Star[] stars;
     private final BulletPool bulletPool;
     private final Music music;
+    private final AlienPool aliensPool;
+    private AlienGenerator generator;
 
 
     public MenuScreen(UserInputEventProvider userInputEventProvider) {
         super(userInputEventProvider);
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         gameAtlas = new TextureAtlas("textures/mainAtlas.tpack");
+        bgTexture = new Texture("bg01.png");
         bulletPool = new BulletPool();
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+        aliensPool = new AlienPool(TextureRegions.split(gameAtlas.findRegion("enemy0"), 1,2,2));
     }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor((InputProcessor) userEventProvider);
-        bgTexture = new Texture("bg01.png");
         background = new Background(bgTexture);
+        TextureRegion bulletRegion = gameAtlas.findRegion("bulletMainShip");
         TextureRegion[] playerTextures = TextureRegions.split(
                 gameAtlas.findRegion("main_ship"), 1, 2, 2);
-        TextureRegion bulletRegion = gameAtlas.findRegion("bulletMainShip");
         playerShip = new PlayerShip(userEventProvider, screenToWorld, playerTextures, bulletPool, bulletRegion);
-        stars = new Star[128];
+        stars = new Star[128]; // TODO refactor to use SpritePool
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(atlas.findRegion("star"));
         }
+        generator = new AlienGenerator(5f, aliensPool, worldBounds);
         batch = new SpriteBatch();
         music.setLooping(true);
         music.setVolume(0.2f);
         music.play();
+
     }
 
     private void update(float delta) {
+        generator.update(delta);
         for (Star s : stars)
             s.update(delta);
         playerShip.update(delta);
         bulletPool.updateActiveSprites(delta);
+        aliensPool.updateActiveSprites(delta);
     }
 
     private void freeAllDestroyed(){
         bulletPool.freeAllDestroyed();
+        aliensPool.freeAllDestroyed();
     }
 
     private void draw(SpriteBatch batch) {
@@ -74,6 +84,7 @@ public class MenuScreen extends BaseScreen {
             s.draw(batch);
         playerShip.draw(batch);
         bulletPool.drawActiveSprites(batch);
+        aliensPool.drawActiveSprites(batch);
     }
 
     @Override
@@ -97,12 +108,13 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void dispose() {
         super.dispose();
-        playerShip.dispose();
+        music.dispose();
         bgTexture.dispose();
         atlas.dispose();
         gameAtlas.dispose();
+        playerShip.dispose();
         bulletPool.dispose();
-        music.dispose();
+        aliensPool.dispose();
     }
 
     @Override

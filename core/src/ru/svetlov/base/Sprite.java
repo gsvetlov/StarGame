@@ -25,6 +25,10 @@ public abstract class Sprite {
         this(region, new Vector2(), new Vector2(), new Vector2());
     }
 
+    public Sprite(TextureRegion[] regions){
+        this(regions, new Vector2(), new Vector2(), new Vector2());
+    }
+
     public Sprite(TextureRegion[] regions, Vector2 position, Vector2 velocity, Vector2 acceleration) {
         this.regions = regions;
         this.position = position.cpy();
