@@ -11,37 +11,42 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 
+import java.util.List;
+
 import ru.svetlov.base.BaseScreen;
 import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.base.util.TextureRegions;
 import ru.svetlov.model.AlienGenerator;
+import ru.svetlov.model.AlienShip;
 import ru.svetlov.model.Background;
+import ru.svetlov.model.Bullet;
+import ru.svetlov.model.Collide;
 import ru.svetlov.model.Star;
 import ru.svetlov.model.PlayerShip;
+import ru.svetlov.model.configuration.StaticConfigurationProvider;
 import ru.svetlov.pool.AlienPool;
 import ru.svetlov.pool.BulletPool;
 
-public class MenuScreen extends BaseScreen {
+public class GameScreen extends BaseScreen {
     private final TextureAtlas atlas;
     private final TextureAtlas gameAtlas;
     private final Texture bgTexture;
+    private final Music music;
+    private final BulletPool bulletPool;
+    private final AlienPool aliensPool;
     private Background background;
     private PlayerShip playerShip;
     private Star[] stars;
-    private final BulletPool bulletPool;
-    private final Music music;
-    private final AlienPool aliensPool;
     private AlienGenerator generator;
 
-
-    public MenuScreen(UserInputEventProvider userInputEventProvider) {
+    public GameScreen(UserInputEventProvider userInputEventProvider) {
         super(userInputEventProvider);
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         gameAtlas = new TextureAtlas("textures/mainAtlas.tpack");
         bgTexture = new Texture("bg01.png");
         bulletPool = new BulletPool();
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
-        aliensPool = new AlienPool(TextureRegions.split(gameAtlas.findRegion("enemy0"), 1,2,2));
+        aliensPool = new AlienPool();
     }
 
     @Override
@@ -56,7 +61,7 @@ public class MenuScreen extends BaseScreen {
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(atlas.findRegion("star"));
         }
-        generator = new AlienGenerator(5f, aliensPool, worldBounds);
+        generator = new AlienGenerator(new StaticConfigurationProvider(), gameAtlas, 5f, aliensPool, worldBounds);
         batch = new SpriteBatch();
         music.setLooping(true);
         music.setVolume(0.2f);
@@ -71,6 +76,17 @@ public class MenuScreen extends BaseScreen {
         playerShip.update(delta);
         bulletPool.updateActiveSprites(delta);
         aliensPool.updateActiveSprites(delta);
+        checkCollisions();
+    }
+
+    private void checkCollisions() {
+        for (AlienShip ship : aliensPool.getActiveObjects()){
+            playerShip.collide(ship, ship.getBounds());
+            for (Bullet bullet : bulletPool.getActiveObjects()){
+                ship.collide(bullet, bullet.getBounds());
+            }
+        }
+
     }
 
     private void freeAllDestroyed(){

@@ -7,11 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class Sprite {
 
-    protected float angle;
-    protected float scale = 1f;
     protected TextureRegion[] regions;
     protected int frame;
+    protected float angle;
+    protected float scale = 1f;
+
     protected Rectangle spriteBounds;
+    protected Rectangle worldBounds;
 
     protected Vector2 position;
     protected Vector2 velocity;
@@ -19,54 +21,48 @@ public abstract class Sprite {
     protected boolean destroyed;
 
     public Sprite() {
+        position = new Vector2();
+        velocity = new Vector2();
+        acceleration = new Vector2();
+        spriteBounds = new Rectangle();
+        worldBounds = new Rectangle();
+    }
+
+    public Sprite(TextureRegion[] regions, Vector2 position, Vector2 velocity, Vector2 acceleration) {
+        this.regions = regions;
+        this.position = position;
+        this.velocity = velocity;
+        this.acceleration = acceleration;
+        setRegions(regions);
     }
 
     public Sprite(TextureRegion region) {
         this(region, new Vector2(), new Vector2(), new Vector2());
     }
 
-    public Sprite(TextureRegion[] regions){
-        this(regions, new Vector2(), new Vector2(), new Vector2());
-    }
-
-    public Sprite(TextureRegion[] regions, Vector2 position, Vector2 velocity, Vector2 acceleration) {
-        this.regions = regions;
-        this.position = position.cpy();
-        this.velocity = velocity.cpy();
-        this.acceleration = acceleration.cpy();
-        spriteBounds = new Rectangle(0, 0, regions[0].getRegionWidth(), regions[0].getRegionHeight());
-    }
-
-    public Sprite(TextureRegion region, Vector2 position) {
-        this(region, position, new Vector2(), new Vector2());
-    }
-
-    public Sprite(TextureRegion region, Vector2 position, Vector2 velocity) {
-        this(region, position, velocity, new Vector2());
-    }
-
     public Sprite(TextureRegion region, Vector2 position, Vector2 velocity, Vector2 acceleration) {
-        regions = new TextureRegion[1];
+        this.position = position;
+        this.velocity = velocity;
+        this.acceleration = acceleration;
+        TextureRegion[] regions = new TextureRegion[1];
         regions[0] = region;
-        this.position = position.cpy();
-        this.velocity = velocity.cpy();
-        this.acceleration = acceleration.cpy();
-        spriteBounds = new Rectangle(0, 0, regions[0].getRegionWidth(), regions[0].getRegionHeight());
+        setRegions(regions);
     }
 
     public void draw(SpriteBatch batch) {
         batch.draw(
                 regions[frame],
                 spriteBounds.x, spriteBounds.y,
-                spriteBounds.width / 2f, spriteBounds.height / 2f,
+                position.x, position.y,
                 spriteBounds.width, spriteBounds.height,
                 scale, scale,
                 angle
         );
     }
 
-
-    public abstract void resize(Rectangle worldBounds);
+    public void resize(Rectangle worldBounds) {
+        this.worldBounds = worldBounds;
+    }
 
     public void setHeight(float height) {
         float aspect = spriteBounds.getAspectRatio();
@@ -100,12 +96,21 @@ public abstract class Sprite {
         spriteBounds.setCenter(position);
     }
 
+    public void setPosition(float x, float y) {
+        position.set(x, y);
+        spriteBounds.setCenter(position);
+    }
+
     public Vector2 getVelocity() {
         return velocity;
     }
 
     public void setVelocity(Vector2 velocity) {
         this.velocity.set(velocity);
+    }
+
+    public void setVelocity(float x, float y) {
+        this.velocity.set(x, y);
     }
 
     public Vector2 getAcceleration() {
@@ -116,11 +121,30 @@ public abstract class Sprite {
         this.acceleration.set(acceleration);
     }
 
+    public void setAcceleration(float x, float y) {
+        this.acceleration.set(x, y);
+    }
+
     public boolean isDestroyed() {
         return destroyed;
     }
 
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
+    }
+
+    public void setRegions(TextureRegion[] regions) {
+        this.regions = regions;
+        spriteBounds = new Rectangle(0, 0,
+                regions[0].getRegionWidth(), regions[0].getRegionHeight())
+                .setCenter(position);
+    }
+
+    public float getWidth() {
+        return spriteBounds.getWidth();
+    }
+
+    public Rectangle getBounds(){
+        return spriteBounds;
     }
 }
