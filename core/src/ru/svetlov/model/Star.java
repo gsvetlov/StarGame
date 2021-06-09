@@ -12,12 +12,8 @@ import ru.svetlov.base.util.Rnd;
 
 public class Star extends Sprite {
 
-    private final Vector2 v;
-    private Rectangle worldBounds;
-
     public Star(TextureRegion region) {
         super(region);
-        this.v = new Vector2();
         velocity.set(0,Rnd.nextFloat(-0.01f,-0.1f));
     }
 
@@ -30,7 +26,7 @@ public class Star extends Sprite {
 
     @Override
     public void resize(Rectangle worldBounds) {
-        this.worldBounds = worldBounds;
+        super.resize(worldBounds);
         setHeight(0.005f);
         float x = Rnd.nextFloat(worldBounds.x, worldBounds.x + worldBounds.width);
         float y = Rnd.nextFloat(worldBounds.y, worldBounds.y + worldBounds.height);

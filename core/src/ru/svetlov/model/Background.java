@@ -14,11 +14,7 @@ public class Background extends Sprite {
 
     @Override
     public void resize(Rectangle worldBounds) {
+        super.resize(worldBounds);
         setHeight(1f);
-    }
-
-    @Override
-    public void dispose() {
-
     }
 }
