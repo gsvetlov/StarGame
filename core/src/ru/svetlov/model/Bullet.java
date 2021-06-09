@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.svetlov.base.Sprite;
 
-public class Bullet extends Sprite {
+public class Bullet extends Sprite implements Collide {
     private Rectangle worldBounds;
     private int damage;
     private Sprite owner;
@@ -56,4 +56,21 @@ public class Bullet extends Sprite {
         return owner;
     }
 
+    @Override
+    public boolean collide(Collide object, Rectangle bounds) {
+        if (!spriteBounds.overlaps(bounds)) return false;
+        takeDamage(object.giveDamage());
+        object.takeDamage(giveDamage());
+        return true;
+    }
+
+    @Override
+    public void takeDamage(int damage) {
+        destroyed = true;
+    }
+
+    @Override
+    public int giveDamage() {
+        return damage;
+    }
 }
