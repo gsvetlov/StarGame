@@ -1,19 +1,27 @@
 package ru.svetlov.model;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.svetlov.base.Sprite;
 import ru.svetlov.model.configuration.ShipConfiguration;
+import ru.svetlov.pool.BulletPool;
+import ru.svetlov.pool.ExplosionPool;
 
 public class AlienShip extends Ship {
     private Rectangle activeBounds;
     private float blinkCounter;
     private static final float BLINK_DURATION = 0.5f;
 
-    public AlienShip(){
-
+    public AlienShip(
+            TextureRegion[] regions,
+            TextureRegion bulletTexture,
+            BulletPool bullets,
+            ExplosionPool explosions,
+            Sound sound){
+        super(regions, bulletTexture, bullets, explosions, sound, new Vector2(), new Vector2(), new Vector2());
+        autoFire = true;
     }
 
     @Override
@@ -42,6 +50,21 @@ public class AlienShip extends Ship {
         if (blinkCounter > BLINK_DURATION)
             frame = 0;
 
+    }
+
+    @Override
+    public void shoot(boolean trigger) {
+        super.shoot(trigger);
+        Bullet bullet = bullets.obtain();
+        bullet.set(
+                null,
+                bulletTexture,
+                bulletPosition.set(position.x, position.y - spriteBounds.height / 2),
+                bulletSpeed.set(0, velocity.y * bulletSpeedFactor),
+                worldBounds,
+                damage,
+                0.01f);
+        System.out.println("Alien ship shoots");
     }
 
     @Override

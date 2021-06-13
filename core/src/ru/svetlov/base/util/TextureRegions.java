@@ -9,11 +9,12 @@ public class TextureRegions {
         int tileWidth = region.getRegionWidth() / columns;
         int tileHeight = region.getRegionHeight() / rows;
         int frame = 0;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                regions[frame] = new TextureRegion(region, tileWidth * j, tileHeight * i, tileWidth, tileHeight);
-                frame++;
+        for (int i = 0; i < rows && frame < regions.length; i++) {
+            for (int j = 0; j < columns; j++){
+                regions[frame++] = new TextureRegion(region, tileWidth * j, tileHeight * i, tileWidth, tileHeight);
+                if (frame == regions.length) return regions;
             }
+
         }
         return regions;
     }

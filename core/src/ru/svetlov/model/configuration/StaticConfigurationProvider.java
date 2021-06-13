@@ -18,6 +18,8 @@ public class StaticConfigurationProvider implements ShipConfigurationProvider {
                         ShipType.SmallAlien,
                         10,
                         1,
+                        1.5f,
+                        3f,
                         0.1f,
                         0.1f,
                         "enemy0"));
@@ -26,6 +28,8 @@ public class StaticConfigurationProvider implements ShipConfigurationProvider {
                         ShipType.MiddleAlien,
                         20,
                         5,
+                        2f,
+                        2.5f,
                         0.07f,
                         0.12f,
                         "enemy1"));
@@ -34,6 +38,8 @@ public class StaticConfigurationProvider implements ShipConfigurationProvider {
                         ShipType.BigAlien,
                         30,
                         10,
+                        3f,
+                        2.5f,
                         0.05f,
                         0.15f,
                         "enemy2"));

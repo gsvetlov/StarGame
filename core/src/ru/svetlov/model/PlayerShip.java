@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.svetlov.base.Sprite;
 import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.pool.BulletPool;
+import ru.svetlov.pool.ExplosionPool;
 import ru.svetlov.user.controller.events.*;
 
 public class PlayerShip extends Ship {
@@ -20,19 +21,15 @@ public class PlayerShip extends Ship {
     private final Vector2 touch;
     private final Vector2 targetPosition;
 
-    private float blinkCounter;
-    private static final float BLINK_DURATION = 0.5f;
-
     public PlayerShip(UserInputEventProvider provider, Matrix3 screenToWorld,
-                      TextureRegion[] regions, BulletPool bulletPool, TextureRegion bulletRegion) {
-        super(regions, new Vector2(), new Vector2(), new Vector2());
+                      TextureRegion[] regions,
+                      TextureRegion bulletTexture,
+                      BulletPool bullets,
+                      ExplosionPool explosions,
+                      Sound sound) {
+        super(regions, bulletTexture, bullets, explosions, sound, new Vector2(), new Vector2(), new Vector2());
         targetPosition = position.cpy();
         touch = new Vector2();
-
-        this.bullets = bulletPool;
-        this.bulletRegion = bulletRegion;
-        bulletPosition = new Vector2();
-        bulletSpeed = new Vector2();
 
         // get screen to world conversion matrix
         this.screenToWorld = screenToWorld; // TODO: refactor to call outer converter
@@ -44,7 +41,6 @@ public class PlayerShip extends Ship {
         this.provider.subscribe((KeyDownEvent) this::onKeyDown);
         this.provider.subscribe((KeyUpEvent) this::onKeyUp);
 
-
         position.set(0, -0.42f); // set position to lower part of screen
     }
 
@@ -54,27 +50,15 @@ public class PlayerShip extends Ship {
     }
 
     @Override
-    public void resize(Rectangle worldBounds) {
-        this.worldBounds = worldBounds;
-        setHeight(.1f);
-    }
-
-    @Override
     public void update(float delta) {
         checkPositionReached(delta);
         super.update(delta);
-        if (autoFire) runAutoFire(delta);
-        blinkCounter +=delta;
-        if (blinkCounter > BLINK_DURATION)
-            frame = 0;
     }
 
-    private void runAutoFire(float delta){
-        triggerCounter += delta;
-        if (triggerCounter > AUTOFIRE_TIMESPAN){
-            shoot(autoFire);
-            triggerCounter -= AUTOFIRE_TIMESPAN;
-        }
+    @Override
+    public void resize(Rectangle worldBounds) {
+        this.worldBounds = worldBounds;
+        setHeight(.1f);
     }
 
     @Override
@@ -102,6 +86,20 @@ public class PlayerShip extends Ship {
             position.y = worldBounds.getY();
         if (position.y > worldBounds.getY() + worldBounds.getHeight())
             position.y = worldBounds.getY() + worldBounds.getHeight();
+    }
+
+    @Override
+    public void shoot(boolean trigger) {
+        super.shoot(trigger);
+        Bullet bullet = bullets.obtain();
+        bullet.set(
+                this,
+                bulletTexture,
+                bulletPosition.set(position.x, position.y + spriteBounds.height / 2),
+                bulletSpeed.set(0, 0.5f),
+                worldBounds,
+                3,
+                0.01f);
     }
 
     @Override

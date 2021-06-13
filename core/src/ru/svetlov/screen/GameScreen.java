@@ -3,6 +3,7 @@ package ru.svetlov.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -26,37 +27,54 @@ import ru.svetlov.model.PlayerShip;
 import ru.svetlov.model.configuration.StaticConfigurationProvider;
 import ru.svetlov.pool.AlienPool;
 import ru.svetlov.pool.BulletPool;
+import ru.svetlov.pool.ExplosionPool;
 
 public class GameScreen extends BaseScreen {
     private final TextureAtlas atlas;
     private final TextureAtlas gameAtlas;
     private final Texture bgTexture;
     private final Music music;
+    private final Sound explosionSound;
+    private final Sound alienSound;
+    private final Sound playerSound;
     private final BulletPool bulletPool;
-    private final AlienPool aliensPool;
-    private Background background;
+    private final ExplosionPool explosionPool;
+    private final Background background;
+
     private PlayerShip playerShip;
     private Star[] stars;
     private AlienGenerator generator;
+    private AlienPool aliensPool;
 
     public GameScreen(UserInputEventProvider userInputEventProvider) {
         super(userInputEventProvider);
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         gameAtlas = new TextureAtlas("textures/mainAtlas.tpack");
         bgTexture = new Texture("bg01.png");
-        bulletPool = new BulletPool();
+        background = new Background(bgTexture);
+        playerSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
+        alienSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
-        aliensPool = new AlienPool();
+        bulletPool = new BulletPool();
+        explosionPool = new ExplosionPool(
+                TextureRegions.split(
+                        gameAtlas.findRegion("explosion"),
+                        9,
+                        9,
+                        74),
+                explosionSound);
     }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor((InputProcessor) userEventProvider);
-        background = new Background(bgTexture);
-        TextureRegion bulletRegion = gameAtlas.findRegion("bulletMainShip");
+        TextureRegion playerBullet = gameAtlas.findRegion("bulletMainShip");
         TextureRegion[] playerTextures = TextureRegions.split(
                 gameAtlas.findRegion("main_ship"), 1, 2, 2);
-        playerShip = new PlayerShip(userEventProvider, screenToWorld, playerTextures, bulletPool, bulletRegion);
+        playerShip = new PlayerShip(userEventProvider, screenToWorld, playerTextures, playerBullet, bulletPool, explosionPool, playerSound);
+        TextureRegion alienBullet = gameAtlas.findRegion("bulletEnemy");
+        aliensPool = new AlienPool(playerTextures, alienBullet, bulletPool, explosionPool, alienSound);
         stars = new Star[128]; // TODO refactor to use SpritePool
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(atlas.findRegion("star"));
@@ -66,32 +84,35 @@ public class GameScreen extends BaseScreen {
         music.setLooping(true);
         music.setVolume(0.2f);
         music.play();
-
     }
 
     private void update(float delta) {
         generator.update(delta);
         for (Star s : stars)
             s.update(delta);
+        explosionPool.updateActiveSprites(delta);
         playerShip.update(delta);
-        bulletPool.updateActiveSprites(delta);
         aliensPool.updateActiveSprites(delta);
+        bulletPool.updateActiveSprites(delta);
         checkCollisions();
     }
 
     private void checkCollisions() {
-        for (AlienShip ship : aliensPool.getActiveObjects()){
+        for (AlienShip ship : aliensPool.getActiveObjects()) {
             playerShip.collide(ship, ship.getBounds());
             for (Bullet bullet : bulletPool.getActiveObjects()){
-                ship.collide(bullet, bullet.getBounds());
+                if (bullet.getOwner() != null)
+                    ship.collide(bullet, bullet.getBounds());
+                else
+                    playerShip.collide(bullet, bullet.getBounds());
             }
         }
-
     }
 
-    private void freeAllDestroyed(){
+    private void freeAllDestroyed() {
         bulletPool.freeAllDestroyed();
         aliensPool.freeAllDestroyed();
+        explosionPool.freeAllDestroyed();
     }
 
     private void draw(SpriteBatch batch) {
@@ -101,6 +122,7 @@ public class GameScreen extends BaseScreen {
         playerShip.draw(batch);
         bulletPool.drawActiveSprites(batch);
         aliensPool.drawActiveSprites(batch);
+        explosionPool.drawActiveSprites(batch);
     }
 
     @Override
@@ -125,12 +147,16 @@ public class GameScreen extends BaseScreen {
     public void dispose() {
         super.dispose();
         music.dispose();
+        playerSound.dispose();
+        alienSound.dispose();
+        explosionSound.dispose();
+        bulletPool.dispose();
+        explosionPool.dispose();
+        aliensPool.dispose();
+        playerShip.dispose();
         bgTexture.dispose();
         atlas.dispose();
         gameAtlas.dispose();
-        playerShip.dispose();
-        bulletPool.dispose();
-        aliensPool.dispose();
     }
 
     @Override
