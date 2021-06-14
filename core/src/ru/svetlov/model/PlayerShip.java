@@ -34,7 +34,8 @@ public class PlayerShip extends Ship {
         // get screen to world conversion matrix
         this.screenToWorld = screenToWorld; // TODO: refactor to call outer converter
 
-        this.provider = provider; // subscribe user input
+        // subscribe to user input
+        this.provider = provider;
         this.provider.subscribe((TouchDownEvent) this::onTouchDown);
         this.provider.subscribe((TouchUpEvent) this::onTouchUp);
         this.provider.subscribe(this::onTouchDragged);
@@ -42,6 +43,8 @@ public class PlayerShip extends Ship {
         this.provider.subscribe((KeyUpEvent) this::onKeyUp);
 
         position.set(0, -0.42f); // set position to lower part of screen
+        hp = 100;
+        damage = 2;
     }
 
     public void getToPosition(Vector2 pos, float speed) {
@@ -62,6 +65,12 @@ public class PlayerShip extends Ship {
     }
 
     @Override
+    public void setDestroyed(boolean destroyed) {
+        super.setDestroyed(destroyed);
+        dispose();
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
         provider.unsubscribe((TouchDownEvent) this::onTouchDown);
@@ -69,6 +78,7 @@ public class PlayerShip extends Ship {
         provider.unsubscribe(this::onTouchDragged);
         provider.unsubscribe((KeyDownEvent) this::onKeyDown);
         provider.unsubscribe((KeyUpEvent) this::onKeyUp);
+        System.out.println("player ship disposed");
     }
 
     private void checkPositionReached(float delta) {
@@ -98,7 +108,7 @@ public class PlayerShip extends Ship {
                 bulletPosition.set(position.x, position.y + spriteBounds.height / 2),
                 bulletSpeed.set(0, 0.5f),
                 worldBounds,
-                3,
+                damage,
                 0.01f);
     }
 
@@ -106,11 +116,12 @@ public class PlayerShip extends Ship {
     public void takeDamage(int damage) {
         frame = 1;
         blinkCounter = 0;
+        super.takeDamage(damage);
     }
 
     @Override
     public int giveDamage() {
-        return Integer.MAX_VALUE;
+        return damage * 2;
     }
 
     private void onTouchDown(float screenX, float screenY, int pointer, int button) {
@@ -120,7 +131,7 @@ public class PlayerShip extends Ship {
     private void onTouchUp(float screenX, float screenY, int pointer, int button) {
         touch.set(screenX, screenY).mul(screenToWorld);
         getToPosition(touch, 0.1f);
-        autoFire = true;
+        if (pointer == 1) autoFire = !autoFire;
     }
 
     private void onTouchDragged(float screenX, float screenY, int pointer) {

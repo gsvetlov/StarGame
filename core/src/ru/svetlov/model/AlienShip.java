@@ -44,7 +44,6 @@ public class AlienShip extends Ship {
         super.update(delta);
         if (!activeBounds.contains(position)) {
             setDestroyed(true);
-            System.out.println("alienShip out of bounds");
         }
         blinkCounter +=delta;
         if (blinkCounter > BLINK_DURATION)
@@ -64,7 +63,6 @@ public class AlienShip extends Ship {
                 worldBounds,
                 damage,
                 0.01f);
-        System.out.println("Alien ship shoots");
     }
 
     @Override
@@ -72,12 +70,10 @@ public class AlienShip extends Ship {
         super.takeDamage(damage);
         frame = 1;
         blinkCounter = 0;
-        System.out.println("[alien] damage taken: " + damage);
     }
 
     @Override
     public int giveDamage() {
-        System.out.println("[alien] damage given");
         return super.giveDamage();
     }
 }

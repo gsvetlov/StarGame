@@ -50,6 +50,7 @@ public abstract class Sprite {
     }
 
     public void draw(SpriteBatch batch) {
+        if (destroyed) return;
         batch.draw(
                 regions[frame],
                 spriteBounds.x, spriteBounds.y,
@@ -71,6 +72,7 @@ public abstract class Sprite {
 
 
     public void update(float delta) {
+        if (destroyed) return;
         updateVelocity(delta);
         updatePosition(delta);
     }

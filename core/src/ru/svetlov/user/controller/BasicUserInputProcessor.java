@@ -80,7 +80,8 @@ public class BasicUserInputProcessor extends InputAdapter implements UserInputEv
 
     @Override
     public void unsubscribe(TouchDownEvent listener) {
-        touchDownEventListeners.remove(listener);
+
+        //touchDownEventListeners.remove(listener);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class BasicUserInputProcessor extends InputAdapter implements UserInputEv
 
     @Override
     public void unsubscribe(TouchUpEvent listener) {
-        touchUpEventListeners.remove(listener);
+        //touchUpEventListeners.remove(listener);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class BasicUserInputProcessor extends InputAdapter implements UserInputEv
 
     @Override
     public void unsubscribe(TouchDraggedEvent listener) {
-        touchDraggedEventListeners.remove(listener);
+        //touchDraggedEventListeners.remove(listener);
     }
 
     @Override
@@ -110,7 +111,7 @@ public class BasicUserInputProcessor extends InputAdapter implements UserInputEv
 
     @Override
     public void unsubscribe(KeyDownEvent listener) {
-        keyDownEventListeners.remove(listener);
+        //keyDownEventListeners.remove(listener);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class BasicUserInputProcessor extends InputAdapter implements UserInputEv
 
     @Override
     public void unsubscribe(KeyUpEvent listener) {
-        keyUpEventListeners.remove(listener);
+        //keyUpEventListeners.remove(listener);
     }
 
     @Override
@@ -130,7 +131,7 @@ public class BasicUserInputProcessor extends InputAdapter implements UserInputEv
 
     @Override
     public void unsubscribe(KeyTypedEvent listener) {
-        keyTypedEventListeners.remove(listener);
+        //keyTypedEventListeners.remove(listener);
     }
 
 }

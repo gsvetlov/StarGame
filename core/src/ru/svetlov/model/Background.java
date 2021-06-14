@@ -8,8 +8,8 @@ import ru.svetlov.base.Sprite;
 
 public class Background extends Sprite {
 
-    public Background(Texture texture) {
-        super(new TextureRegion(texture));
+    public Background(TextureRegion texture) {
+        super(texture);
     }
 
     @Override

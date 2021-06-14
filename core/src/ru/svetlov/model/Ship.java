@@ -87,6 +87,7 @@ public abstract class Ship extends Sprite implements Collide {
 
     @Override
     public boolean collide(Collide object, Rectangle bounds) {
+        if (destroyed) return false;
         if (position.dst2(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2)
                 < spriteBounds.height * spriteBounds.height * spriteBounds.height) {
             takeDamage(object.giveDamage());
@@ -104,7 +105,7 @@ public abstract class Ship extends Sprite implements Collide {
 
     @Override
     public int giveDamage() {
-        return damage;
+        return damage * 2;
     }
 
     @Override
