@@ -13,23 +13,15 @@ import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.pool.BulletPool;
 import ru.svetlov.user.controller.events.*;
 
-public class PlayerShip extends Sprite {
-    private final Vector2 targetPosition;
+public class PlayerShip extends Ship {
+
+    private final Matrix3 screenToWorld;
     private final UserInputEventProvider provider;
     private final Vector2 touch;
-    private final Matrix3 screenToWorld;
-    private Rectangle worldBounds;
+    private final Vector2 targetPosition;
 
-    private final BulletPool bullets;
-    private final TextureRegion bulletRegion;
-    private final Vector2 bulletPosition;
-    private final Vector2 bulletSpeed;
-
-    private final Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav")); // звук выстрела
-
-    private boolean autoFire;
-    private float triggerCounter;
-    private final static float AUTOFIRE_TIMESPAN = 0.25f;
+    private float blinkCounter;
+    private static final float BLINK_DURATION = 0.5f;
 
     public PlayerShip(UserInputEventProvider provider, Matrix3 screenToWorld,
                       TextureRegion[] regions, BulletPool bulletPool, TextureRegion bulletRegion) {
@@ -72,6 +64,9 @@ public class PlayerShip extends Sprite {
         checkPositionReached(delta);
         super.update(delta);
         if (autoFire) runAutoFire(delta);
+        blinkCounter +=delta;
+        if (blinkCounter > BLINK_DURATION)
+            frame = 0;
     }
 
     private void runAutoFire(float delta){
@@ -84,12 +79,12 @@ public class PlayerShip extends Sprite {
 
     @Override
     public void dispose() {
+        super.dispose();
         provider.unsubscribe((TouchDownEvent) this::onTouchDown);
         provider.unsubscribe((TouchUpEvent) this::onTouchUp);
         provider.unsubscribe(this::onTouchDragged);
         provider.unsubscribe((KeyDownEvent) this::onKeyDown);
         provider.unsubscribe((KeyUpEvent) this::onKeyUp);
-        sound.dispose();
     }
 
     private void checkPositionReached(float delta) {
@@ -109,18 +104,15 @@ public class PlayerShip extends Sprite {
             position.y = worldBounds.getY() + worldBounds.getHeight();
     }
 
-    private void shoot(boolean trigger) {
-        if (!trigger) return;
-        Bullet bullet = bullets.obtain();
-        bullet.set(
-                this,
-                bulletRegion,
-                bulletPosition.set(position.x, position.y + spriteBounds.height / 2),
-                bulletSpeed.set(0, 0.4f),
-                worldBounds,
-                1,
-                0.01f);
-        sound.play();
+    @Override
+    public void takeDamage(int damage) {
+        frame = 1;
+        blinkCounter = 0;
+    }
+
+    @Override
+    public int giveDamage() {
+        return Integer.MAX_VALUE;
     }
 
     private void onTouchDown(float screenX, float screenY, int pointer, int button) {
