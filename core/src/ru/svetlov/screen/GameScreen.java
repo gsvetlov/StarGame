@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,20 +12,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 
-import java.util.List;
-
 import ru.svetlov.base.BaseScreen;
 import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.base.util.TextureRegions;
 import ru.svetlov.factory.Factory;
-import ru.svetlov.model.AlienGenerator;
-import ru.svetlov.model.AlienShip;
+import ru.svetlov.model.ship.AlienGenerator;
+import ru.svetlov.model.ship.AlienShip;
 import ru.svetlov.model.Background;
 import ru.svetlov.model.Bullet;
-import ru.svetlov.model.Collide;
 import ru.svetlov.model.GameOver;
 import ru.svetlov.model.Star;
-import ru.svetlov.model.PlayerShip;
+import ru.svetlov.model.ship.PlayerShip;
 import ru.svetlov.model.configuration.StaticConfigurationProvider;
 import ru.svetlov.pool.AlienPool;
 import ru.svetlov.pool.BulletPool;

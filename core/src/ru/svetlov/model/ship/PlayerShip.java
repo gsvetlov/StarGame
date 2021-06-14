@@ -1,6 +1,5 @@
-package ru.svetlov.model;
+package ru.svetlov.model.ship;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,8 +7,8 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.svetlov.base.Sprite;
 import ru.svetlov.base.UserInputEventProvider;
+import ru.svetlov.model.Bullet;
 import ru.svetlov.pool.BulletPool;
 import ru.svetlov.pool.ExplosionPool;
 import ru.svetlov.user.controller.events.*;
@@ -72,13 +71,13 @@ public class PlayerShip extends Ship {
 
     @Override
     public void dispose() {
+        autoFire = false;
         super.dispose();
         provider.unsubscribe((TouchDownEvent) this::onTouchDown);
         provider.unsubscribe((TouchUpEvent) this::onTouchUp);
         provider.unsubscribe(this::onTouchDragged);
         provider.unsubscribe((KeyDownEvent) this::onKeyDown);
         provider.unsubscribe((KeyUpEvent) this::onKeyUp);
-        System.out.println("player ship disposed");
     }
 
     private void checkPositionReached(float delta) {

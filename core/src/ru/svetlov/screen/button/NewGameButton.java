@@ -1,4 +1,4 @@
-package ru.svetlov.model;
+package ru.svetlov.screen.button;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,8 +22,12 @@ public class NewGameButton extends UserButton {
 
     @Override
     protected void onTouchDragged(float screenX, float screenY, int pointer) {
-        onTouchDown(screenX, screenY, pointer, 0);
-
+        super.onTouchDragged(screenX, screenY, pointer);
+        if (spriteBounds.contains(touch) && pointer == 0) {
+            setHeight(height * 1.2f);
+        } else {
+            setHeight(height);
+        }
     }
 
     @Override

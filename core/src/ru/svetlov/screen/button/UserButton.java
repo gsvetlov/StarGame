@@ -1,4 +1,4 @@
-package ru.svetlov.model;
+package ru.svetlov.screen.button;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix3;
@@ -10,7 +10,6 @@ import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.user.controller.events.KeyDownEvent;
 import ru.svetlov.user.controller.events.KeyUpEvent;
 import ru.svetlov.user.controller.events.TouchDownEvent;
-import ru.svetlov.user.controller.events.TouchDraggedEvent;
 import ru.svetlov.user.controller.events.TouchUpEvent;
 
 public abstract class UserButton extends Sprite {
@@ -66,6 +65,7 @@ public abstract class UserButton extends Sprite {
     }
 
     protected void onTouchDragged(float screenX, float screenY, int pointer) {
+        touch.set(screenX, screenY).mul(screenToWorld);
     }
 
     protected void onKeyDown(int code) {

@@ -1,4 +1,4 @@
-package ru.svetlov.model;
+package ru.svetlov.model.ship;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

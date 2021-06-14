@@ -1,4 +1,4 @@
-package ru.svetlov.model;
+package ru.svetlov.model.ship;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.svetlov.base.Sprite;
+import ru.svetlov.model.Collide;
+import ru.svetlov.model.Explosion;
 import ru.svetlov.model.configuration.ShipConfiguration;
 import ru.svetlov.pool.BulletPool;
 import ru.svetlov.pool.ExplosionPool;

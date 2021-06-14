@@ -1,16 +1,10 @@
 package ru.svetlov.pool;
 
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ru.svetlov.base.SpritesPool;
-import ru.svetlov.base.util.TextureRegions;
-import ru.svetlov.model.AlienShip;
-import ru.svetlov.model.configuration.ShipConfiguration;
+import ru.svetlov.model.ship.AlienShip;
 
 public class AlienPool extends SpritesPool<AlienShip> {
     private final TextureRegion[] regions;

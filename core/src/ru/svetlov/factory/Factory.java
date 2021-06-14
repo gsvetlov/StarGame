@@ -9,12 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import ru.svetlov.base.UserInputEventProvider;
-import ru.svetlov.base.util.TextureRegions;
 import ru.svetlov.model.Background;
-import ru.svetlov.model.NewGameButton;
 import ru.svetlov.model.Star;
-import ru.svetlov.pool.BulletPool;
-import ru.svetlov.pool.ExplosionPool;
 import ru.svetlov.screen.GameScreen;
 import ru.svetlov.screen.NewGameScreen;
 import ru.svetlov.user.controller.BasicUserInputProcessor;

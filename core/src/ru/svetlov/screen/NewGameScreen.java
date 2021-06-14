@@ -3,8 +3,6 @@ package ru.svetlov.screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -12,9 +10,9 @@ import ru.svetlov.base.BaseScreen;
 import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.factory.Factory;
 import ru.svetlov.model.Background;
-import ru.svetlov.model.NewGameButton;
+import ru.svetlov.screen.button.NewGameButton;
 import ru.svetlov.model.Star;
-import ru.svetlov.model.UserButton;
+import ru.svetlov.screen.button.UserButton;
 
 public class NewGameScreen extends BaseScreen {
     private final TextureRegion newGameTexture;
@@ -44,7 +42,7 @@ public class NewGameScreen extends BaseScreen {
 
     private void newGameAction() {
         System.out.println("button Action!");
-        game.setScreen(Factory.getFactory().getNewGameScreen(game));
+        game.setScreen(Factory.getFactory().getGameScreen(game));
     }
 
 
