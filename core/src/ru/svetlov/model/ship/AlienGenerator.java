@@ -24,6 +24,7 @@ public class AlienGenerator {
     private final AlienPool aliens;
     private float generationTimeCounter;
     private Rectangle worldBounds;
+    private int level;
 
     public AlienGenerator(ShipConfigurationProvider provider, TextureAtlas atlas, float generationTime, AlienPool alienPool, Rectangle worldBounds) {
         this.generationTime = generationTime;
@@ -34,7 +35,8 @@ public class AlienGenerator {
         textures = new HashMap<>();
     }
 
-    public void update(float delta) {
+    public void update(float delta, int level) {
+        this.level = level;
         generationTimeCounter += delta;
         if (generationTimeCounter > generationTime) {
             generateAlien();
@@ -53,7 +55,7 @@ public class AlienGenerator {
                 worldBounds.x + worldBounds.width - alien.getWidth() / 2);
         float posY = worldBounds.y + worldBounds.height * 1.05f;
         alien.setPosition(posX, posY);
-        //System.out.println("alien ship " + type.name() + " created @ " + alien.getPosition());
+        alien.setDamage(alienConfig.DAMAGE * level);
     }
 
     private TextureRegion[] obtainTexture(String texture_name) {

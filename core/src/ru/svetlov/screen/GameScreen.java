@@ -9,10 +9,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 
 import ru.svetlov.base.BaseScreen;
+import ru.svetlov.base.Font;
 import ru.svetlov.base.UserInputEventProvider;
 import ru.svetlov.base.util.TextureRegions;
 import ru.svetlov.factory.Factory;
@@ -43,6 +45,14 @@ public class GameScreen extends BaseScreen {
     private AlienGenerator generator;
     private AlienPool aliensPool;
 
+    private Font font;
+    private StringBuilder sbFrags;
+    private StringBuilder sbHp;
+    private StringBuilder sbLevel;
+
+    private int frags;
+    private int level;
+
     private GameOver gameOver;
 
     public GameScreen(
@@ -54,7 +64,7 @@ public class GameScreen extends BaseScreen {
             Sound alienSound,
             Sound explosionSound,
             Music music,
-            Star[] stars){
+            Star[] stars) {
         super(game, userInputEventProvider);
         this.gameAtlas = gameAtlas;
         this.background = gameBackground;
@@ -66,7 +76,13 @@ public class GameScreen extends BaseScreen {
         bulletPool = new BulletPool();
         explosionPool = new ExplosionPool(
                 TextureRegions.split(gameAtlas.findRegion("explosion"),
-                        9,9,74),explosionSound);
+                        9, 9, 74), explosionSound);
+
+        font = new Font("fonts/font.fnt", "fonts/font.png");
+        font.setSize(0.018f);
+        sbFrags = new StringBuilder();
+        sbHp = new StringBuilder();
+        sbLevel = new StringBuilder();
 
     }
 
@@ -112,7 +128,8 @@ public class GameScreen extends BaseScreen {
     }
 
     private void update(float delta) {
-        generator.update(delta);
+        level = 1 + frags / 10;
+        generator.update(delta, level);
         for (Star s : stars)
             s.update(delta);
         explosionPool.updateActiveSprites(delta);
@@ -122,7 +139,7 @@ public class GameScreen extends BaseScreen {
         checkCollisions();
         gameOver.update(delta);
         if (!gameOver.isActive() && playerShip.isDestroyed())
-            gameOver.run(0,0);
+            gameOver.run(0, 0);
     }
 
     private void checkCollisions() {
@@ -130,9 +147,11 @@ public class GameScreen extends BaseScreen {
             if (!playerShip.isDestroyed())
                 playerShip.collide(ship, ship.getBounds());
             for (Bullet bullet : bulletPool.getActiveObjects()) {
-                if (bullet.getOwner() != null)
+                if (bullet.getOwner() != null) {
+                    if (ship.isDestroyed()) continue;
                     ship.collide(bullet, bullet.getBounds());
-                else
+                    if (ship.isDestroyed()) frags++;
+                } else
                     playerShip.collide(bullet, bullet.getBounds());
             }
         }
@@ -154,6 +173,7 @@ public class GameScreen extends BaseScreen {
         explosionPool.drawActiveSprites(batch);
         if (gameOver.isActive())
             gameOver.draw(batch);
+        printInfo();
     }
 
     @Override
@@ -201,5 +221,17 @@ public class GameScreen extends BaseScreen {
     private void screenSwitch() {
         System.out.println("screen switch active");
         game.setScreen(Factory.getFactory().getNewGameScreen(game));
+    }
+
+    private void printInfo() {
+        sbFrags.setLength(0);
+        sbFrags.append("Frags: ").append(frags);
+        sbHp.setLength(0);
+        sbHp.append("HP: ").append(playerShip.getHp());
+        sbLevel.setLength(0);
+        sbLevel.append("Level: ").append(level);
+        font.draw(batch, sbFrags, worldBounds.x + 0.01f, -worldBounds.y - 0.01f);
+        font.draw(batch, sbHp, 0, -worldBounds.y - 0.01f, Align.center);
+        font.draw(batch, sbLevel, worldBounds.x + worldBounds.width - 0.01f, -worldBounds.y - 0.01f, Align.right);
     }
 }
