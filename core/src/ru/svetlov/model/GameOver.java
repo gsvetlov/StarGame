@@ -10,7 +10,7 @@ import ru.svetlov.base.Sprite;
 
 public class GameOver extends Sprite {
     private static final float STARTUP_COUNTER_LIMIT = 3f;
-    private static final float DISPLAY_COUNTER_LIMIT = 10f;
+    private static final float DISPLAY_COUNTER_LIMIT = 6f;
     private boolean isActive;
     private float startCounter;
     private float displayCounter;

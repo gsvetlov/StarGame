@@ -25,6 +25,10 @@ public class AlienShip extends Ship {
         autoFire = true;
     }
 
+    public void setDamage(int damage){
+        this.damage = damage;
+    }
+
     @Override
     public void set(TextureRegion[] regions, ShipConfiguration config) {
         super.set(regions, config);

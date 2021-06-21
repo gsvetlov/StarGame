@@ -46,6 +46,10 @@ public class PlayerShip extends Ship {
         damage = 2;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
     public void getToPosition(Vector2 pos, float speed) {
         targetPosition.set(pos);
         velocity.set(targetPosition).sub(position).nor().scl(speed);
@@ -116,6 +120,7 @@ public class PlayerShip extends Ship {
         frame = 1;
         blinkCounter = 0;
         super.takeDamage(damage);
+        if (hp < 0) hp = 0;
     }
 
     @Override
