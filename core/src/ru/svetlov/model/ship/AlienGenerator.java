@@ -1,4 +1,4 @@
-package ru.svetlov.model;
+package ru.svetlov.model.ship;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -53,7 +53,7 @@ public class AlienGenerator {
                 worldBounds.x + worldBounds.width - alien.getWidth() / 2);
         float posY = worldBounds.y + worldBounds.height * 1.05f;
         alien.setPosition(posX, posY);
-        System.out.println("alien ship " + type.name() + " created @ " + alien.getPosition());
+        //System.out.println("alien ship " + type.name() + " created @ " + alien.getPosition());
     }
 
     private TextureRegion[] obtainTexture(String texture_name) {

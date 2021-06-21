@@ -58,10 +58,13 @@ public class Bullet extends Sprite implements Collide {
 
     @Override
     public boolean collide(Collide object, Rectangle bounds) {
-        if (!spriteBounds.overlaps(bounds)) return false;
-        takeDamage(object.giveDamage());
-        object.takeDamage(giveDamage());
-        return true;
+        if (position.dst2(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2)
+                < spriteBounds.height * spriteBounds.height * spriteBounds.height) {
+            takeDamage(object.giveDamage());
+            object.takeDamage(giveDamage());
+            return true;
+        }
+        return false;
     }
 
     @Override

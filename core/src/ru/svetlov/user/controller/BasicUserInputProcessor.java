@@ -5,18 +5,20 @@ import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import ru.svetlov.user.controller.events.*;
 import ru.svetlov.base.UserInputEventProvider;
 
 
 public class BasicUserInputProcessor extends InputAdapter implements UserInputEventProvider {
-    private final List<KeyUpEvent> keyUpEventListeners = new ArrayList<>();
-    private final List<KeyDownEvent> keyDownEventListeners = new ArrayList<>();
-    private final List<KeyTypedEvent> keyTypedEventListeners = new ArrayList<>();
-    private final List<TouchUpEvent> touchUpEventListeners = new ArrayList<>();
-    private final List<TouchDownEvent> touchDownEventListeners = new ArrayList<>();
-    private final List<TouchDraggedEvent> touchDraggedEventListeners = new ArrayList<>();
+    private final List<KeyUpEvent> keyUpEventListeners = new CopyOnWriteArrayList<>();
+    private final List<KeyDownEvent> keyDownEventListeners = new CopyOnWriteArrayList<>();
+    private final List<KeyTypedEvent> keyTypedEventListeners = new CopyOnWriteArrayList<>();
+    private final List<TouchUpEvent> touchUpEventListeners = new CopyOnWriteArrayList<>();
+    private final List<TouchDownEvent> touchDownEventListeners = new CopyOnWriteArrayList<>();
+    private final List<TouchDraggedEvent> touchDraggedEventListeners = new CopyOnWriteArrayList<>();
 
     private Rectangle screenBounds = new Rectangle();
 

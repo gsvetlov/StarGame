@@ -1,6 +1,5 @@
-package ru.svetlov.model;
+package ru.svetlov.model.ship;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,9 +7,10 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.svetlov.base.Sprite;
 import ru.svetlov.base.UserInputEventProvider;
+import ru.svetlov.model.Bullet;
 import ru.svetlov.pool.BulletPool;
+import ru.svetlov.pool.ExplosionPool;
 import ru.svetlov.user.controller.events.*;
 
 public class PlayerShip extends Ship {
@@ -20,37 +20,41 @@ public class PlayerShip extends Ship {
     private final Vector2 touch;
     private final Vector2 targetPosition;
 
-    private float blinkCounter;
-    private static final float BLINK_DURATION = 0.5f;
-
     public PlayerShip(UserInputEventProvider provider, Matrix3 screenToWorld,
-                      TextureRegion[] regions, BulletPool bulletPool, TextureRegion bulletRegion) {
-        super(regions, new Vector2(), new Vector2(), new Vector2());
+                      TextureRegion[] regions,
+                      TextureRegion bulletTexture,
+                      BulletPool bullets,
+                      ExplosionPool explosions,
+                      Sound sound) {
+        super(regions, bulletTexture, bullets, explosions, sound, new Vector2(), new Vector2(), new Vector2());
         targetPosition = position.cpy();
         touch = new Vector2();
-
-        this.bullets = bulletPool;
-        this.bulletRegion = bulletRegion;
-        bulletPosition = new Vector2();
-        bulletSpeed = new Vector2();
 
         // get screen to world conversion matrix
         this.screenToWorld = screenToWorld; // TODO: refactor to call outer converter
 
-        this.provider = provider; // subscribe user input
+        // subscribe to user input
+        this.provider = provider;
         this.provider.subscribe((TouchDownEvent) this::onTouchDown);
         this.provider.subscribe((TouchUpEvent) this::onTouchUp);
         this.provider.subscribe(this::onTouchDragged);
         this.provider.subscribe((KeyDownEvent) this::onKeyDown);
         this.provider.subscribe((KeyUpEvent) this::onKeyUp);
 
-
         position.set(0, -0.42f); // set position to lower part of screen
+        hp = 100;
+        damage = 2;
     }
 
     public void getToPosition(Vector2 pos, float speed) {
         targetPosition.set(pos);
         velocity.set(targetPosition).sub(position).nor().scl(speed);
+    }
+
+    @Override
+    public void update(float delta) {
+        checkPositionReached(delta);
+        super.update(delta);
     }
 
     @Override
@@ -60,25 +64,14 @@ public class PlayerShip extends Ship {
     }
 
     @Override
-    public void update(float delta) {
-        checkPositionReached(delta);
-        super.update(delta);
-        if (autoFire) runAutoFire(delta);
-        blinkCounter +=delta;
-        if (blinkCounter > BLINK_DURATION)
-            frame = 0;
-    }
-
-    private void runAutoFire(float delta){
-        triggerCounter += delta;
-        if (triggerCounter > AUTOFIRE_TIMESPAN){
-            shoot(autoFire);
-            triggerCounter -= AUTOFIRE_TIMESPAN;
-        }
+    public void setDestroyed(boolean destroyed) {
+        super.setDestroyed(destroyed);
+        dispose();
     }
 
     @Override
     public void dispose() {
+        autoFire = false;
         super.dispose();
         provider.unsubscribe((TouchDownEvent) this::onTouchDown);
         provider.unsubscribe((TouchUpEvent) this::onTouchUp);
@@ -105,14 +98,29 @@ public class PlayerShip extends Ship {
     }
 
     @Override
+    public void shoot(boolean trigger) {
+        super.shoot(trigger);
+        Bullet bullet = bullets.obtain();
+        bullet.set(
+                this,
+                bulletTexture,
+                bulletPosition.set(position.x, position.y + spriteBounds.height / 2),
+                bulletSpeed.set(0, 0.5f),
+                worldBounds,
+                damage,
+                0.01f);
+    }
+
+    @Override
     public void takeDamage(int damage) {
         frame = 1;
         blinkCounter = 0;
+        super.takeDamage(damage);
     }
 
     @Override
     public int giveDamage() {
-        return Integer.MAX_VALUE;
+        return damage * 2;
     }
 
     private void onTouchDown(float screenX, float screenY, int pointer, int button) {
@@ -122,7 +130,7 @@ public class PlayerShip extends Ship {
     private void onTouchUp(float screenX, float screenY, int pointer, int button) {
         touch.set(screenX, screenY).mul(screenToWorld);
         getToPosition(touch, 0.1f);
-        autoFire = true;
+        if (pointer == 1) autoFire = !autoFire;
     }
 
     private void onTouchDragged(float screenX, float screenY, int pointer) {

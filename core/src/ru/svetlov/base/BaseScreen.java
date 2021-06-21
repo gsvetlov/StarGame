@@ -1,5 +1,6 @@
 package ru.svetlov.base;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix3;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.svetlov.base.util.MatrixUtils;
 
 public abstract class BaseScreen implements Screen {
+    protected Game game;
     protected Rectangle screenBounds;
     protected Rectangle worldBounds;
     protected final Rectangle glBounds;
@@ -19,7 +21,9 @@ public abstract class BaseScreen implements Screen {
     protected boolean isPaused;
     protected UserInputEventProvider userEventProvider;
 
-    public BaseScreen(UserInputEventProvider userInputEventProvider) {
+    public BaseScreen(Game game, UserInputEventProvider userInputEventProvider) {
+        this.game = game;
+        batch = new SpriteBatch();
         userEventProvider = userInputEventProvider;
         screenBounds = new Rectangle();
         worldBounds = new Rectangle(0, 0, 0, 1f);
@@ -64,6 +68,7 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void dispose() {
+        System.out.println("Base screen disposing");
         if (batch != null)
             batch.dispose();
     }
